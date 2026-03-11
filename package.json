@@ -1,25 +1,46 @@
 {
   "name": "pathao-unofficial",
   "version": "0.1.0",
-  "description": "Unofficial Pathao client utilities",
+  "description": "Unofficial Pathao delivery API client library. OAuth token management, pricing, orders, and location synchronization.",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
     "test": "node test/run.js",
     "lint": "echo \"No linter configured\"",
-    "prepublishOnly": "node test/run.js"
+    "prepublishOnly": "npm test"
   },
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mojahid2021/pathao-unofficial.git"
+  },
+  "homepage": "https://github.com/mojahid2021/pathao-unofficial",
+  "bugs": {
+    "url": "https://github.com/mojahid2021/pathao-unofficial/issues"
+  },
+  "author": "Md Mojahid <aammojahid@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "pathao",
+    "delivery",
+    "api",
+    "client",
+    "unoffical",
+    "oauth",
+    "shipping",
+    "logistics"
+  ],
   "dependencies": {
     "dotenv": "^16.0.3"
   },
   "devDependencies": {
     "sqlite3": "^5.1.7"
   },
-  "keywords": [
-    "pathao",
-    "client",
-    "unofficial"
-  ],
-  "author": "",
-  "license": "MIT"
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }
