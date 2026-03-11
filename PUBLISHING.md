@@ -43,13 +43,13 @@ If using Option A above, configure the remote:
 cd /root/pathao-unofficial
 
 # Add the GitHub repository as remote
-git remote add origin https://github.com/yourusername/pathao-unofficial.git
+git remote add origin https://github.com/mojahid2021/pathao-unofficial.git
 
 # Verify remote
 git remote -v
 # Output should show:
-# origin  https://github.com/yourusername/pathao-unofficial.git (fetch)
-# origin  https://github.com/yourusername/pathao-unofficial.git (push)
+# origin  https://github.com/mojahid2021/pathao-unofficial.git (fetch)
+# origin  https://github.com/mojahid2021/pathao-unofficial.git (push)
 ```
 
 ## Step 3: Push to GitHub
@@ -62,7 +62,7 @@ git branch -M main
 git push -u origin main
 
 # Verify on GitHub
-# Visit: https://github.com/yourusername/pathao-unofficial
+# Visit: https://github.com/mojahid2021/pathao-unofficial
 ```
 
 ## Step 4: Update package.json with Your GitHub URL
@@ -71,12 +71,12 @@ Edit `package.json` and replace placeholders:
 
 ```bash
 # Replace yourusername with your actual GitHub username
-sed -i 's|yourusername|YOUR_GITHUB_USERNAME|g' package.json
+sed -i 's|mojahid2021|mojahid2021|g' package.json
 
 # Or manually edit package.json:
-# - "url": "https://github.com/yourusername/pathao-unofficial.git"
-# - "homepage": "https://github.com/yourusername/pathao-unofficial"
-# - "author": "Your Name <your.email@example.com>"
+# - "url": "https://github.com/mojahid2021/pathao-unofficial.git"
+# - "homepage": "https://github.com/mojahid2021/pathao-unofficial"
+# - "author": "Md Mojahid <aammojahid@gmail.com>"
 ```
 
 ## Step 5: Test Everything Before Publishing
@@ -128,7 +128,7 @@ npm view pathao-unofficial
 
 # Package should now be available at:
 # - NPM: https://www.npmjs.com/package/pathao-unofficial
-# - GitHub: https://github.com/yourusername/pathao-unofficial
+# - GitHub: https://github.com/mojahid2021/pathao-unofficial
 ```
 
 ### Subsequent Publishing (Version Bumps)
@@ -157,7 +157,7 @@ git tag -a v0.1.0 -m "Release version 0.1.0: Initial publication"
 git push origin v0.1.0
 
 # Then on GitHub:
-# 1. Go to https://github.com/yourusername/pathao-unofficial/releases
+# 1. Go to https://github.com/mojahid2021/pathao-unofficial/releases
 # 2. Click "Releases" tab
 # 3. Find your tag v0.1.0
 # 4. Edit it to create a release with description
@@ -203,7 +203,7 @@ node test.js
 
 - Package name might already exist on NPM
 - Solution: Choose a different name, or contact NPM support if you own the package
-- Scoped packages: `@username/pathao-unofficial`
+- Scoped packages: `@mojahid2021/pathao-unofficial`
 
 ### "npm ERR! not found: npm"
 
@@ -213,14 +213,14 @@ node test.js
 ### "Error: You need to set the email in git"
 
 ```bash
-git config --global user.email "your.email@example.com"
-git config --global user.name "Your Name"
+git config --global user.email "aammojahid@gmail.com"
+git config --global user.name "Md Mojahid"
 ```
 
 ### "fatal: 'origin' does not appear to be a git repository"
 
 - Remote not initialized
-- Solution: Run `git remote add origin https://github.com/your-url/pathao-unofficial.git`
+- Solution: Run `git remote add origin https://github.com/mojahid2021/pathao-unofficial.git`
 
 ### Tests Fail Before Publishing
 

@@ -24,12 +24,12 @@ Your package is **ready to publish**! Here's what to do next.
 2. **Connect Local to GitHub**
    ```bash
    cd /root/pathao-unofficial
-   git remote add origin https://github.com/YOUR_USERNAME/pathao-unofficial.git
+   git remote add origin https://github.com/mojahid2021/pathao-unofficial.git
    git push -u origin main
    ```
 
 3. **Verify on GitHub**
-   - Visit https://github.com/YOUR_USERNAME/pathao-unofficial
+   - Visit https://github.com/mojahid2021/pathao-unofficial
    - All files should be visible
 
 ### Phase 2: Update Package Info (5 minutes)
