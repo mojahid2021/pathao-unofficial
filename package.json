@@ -19,7 +19,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/mojahid2021/pathao-unofficial.git"
+    "url": "git+https://github.com/mojahid2021/pathao-unofficial.git"
   },
   "homepage": "https://github.com/mojahid2021/pathao-unofficial#readme",
   "bugs": {
