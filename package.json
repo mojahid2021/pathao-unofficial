@@ -1,0 +1,25 @@
+{
+  "name": "pathao-unofficial",
+  "version": "0.1.0",
+  "description": "Unofficial Pathao client utilities",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node test/run.js",
+    "lint": "echo \"No linter configured\"",
+    "prepublishOnly": "node test/run.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3"
+  },
+  "devDependencies": {
+    "sqlite3": "^5.1.7"
+  },
+  "keywords": [
+    "pathao",
+    "client",
+    "unofficial"
+  ],
+  "author": "",
+  "license": "MIT"
+}
