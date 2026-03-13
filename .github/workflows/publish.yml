@@ -1,4 +1,4 @@
-name: Publish to GitHub Packages
+name: Publish Package
 
 on:
   release:
@@ -9,8 +9,9 @@ permissions:
   packages: write
 
 jobs:
-  publish:
-    name: Publish package
+  # ── Shared gate ──────────────────────────────────────────────────────────
+  test:
+    name: Run tests
     runs-on: ubuntu-latest
 
     steps:
@@ -21,14 +22,59 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          registry-url: https://npm.pkg.github.com
-          scope: "@mojahid2021"
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run tests
         run: npm test
+
+  # ── Publish to npmjs.com ─────────────────────────────────────────────────
+  publish-npm:
+    name: Publish to npmjs.com
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (npmjs registry)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Publish to npmjs.com
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # ── Publish to GitHub Packages ───────────────────────────────────────────
+  publish-gpr:
+    name: Publish to GitHub Packages
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js (GitHub Packages registry)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          registry-url: https://npm.pkg.github.com
+          scope: "@mojahid2021"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Publish to GitHub Packages
         run: npm publish

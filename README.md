@@ -1,7 +1,8 @@
 # @mojahid2021/pathao-unofficial
 
 [![CI](https://github.com/mojahid2021/pathao-unofficial/actions/workflows/ci.yml/badge.svg)](https://github.com/mojahid2021/pathao-unofficial/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/github/package-json/v/mojahid2021/pathao-unofficial)](https://github.com/mojahid2021/pathao-unofficial/pkgs/npm/pathao-unofficial)
+[![npm version](https://img.shields.io/npm/v/@mojahid2021/pathao-unofficial)](https://www.npmjs.com/package/@mojahid2021/pathao-unofficial)
+[![GitHub Packages](https://img.shields.io/github/package-json/v/mojahid2021/pathao-unofficial)](https://github.com/mojahid2021/pathao-unofficial/pkgs/npm/pathao-unofficial)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 
@@ -9,25 +10,18 @@ Unofficial Pathao delivery API client library for Node.js. Provides OAuth token 
 
 ## Installation
 
-**From GitHub Packages:**
+**From npmjs.com (recommended):**
 
 ```bash
-# Authenticate once (or add to your project's .npmrc)
-npm login --registry=https://npm.pkg.github.com --scope=@mojahid2021
-
-# Install
 npm install @mojahid2021/pathao-unofficial
 ```
 
-Alternatively, add the following to your project's `.npmrc` to configure the scoped registry automatically:
-
-```
-@mojahid2021:registry=https://npm.pkg.github.com
-```
-
-Then install normally:
+**From GitHub Packages:**
 
 ```bash
+# Add to your project's .npmrc
+echo "@mojahid2021:registry=https://npm.pkg.github.com" >> .npmrc
+
 npm install @mojahid2021/pathao-unofficial
 ```
 
@@ -756,3 +750,38 @@ const tree = await getLocationHierarchy(adapter);
 ```
 
 This is convenient for building address pickers or returning full location trees to clients.
+
+## Releasing a New Version
+
+The publish workflow (`publish.yml`) runs automatically when you create a GitHub Release and publishes the package to **both npmjs.com and GitHub Packages**.
+
+### One-time setup: Add NPM_TOKEN secret
+
+1. Generate an npm Access Token at [npmjs.com → Access Tokens](https://www.npmjs.com/settings/~/tokens) — choose **Automation** type.
+2. In your GitHub repository go to **Settings → Secrets and variables → Actions → New repository secret**.
+3. Name: `NPM_TOKEN`, Value: the token from step 1.
+
+The `GITHUB_TOKEN` secret (used for GitHub Packages) is provided automatically — no setup needed.
+
+### Publishing a new release
+
+```bash
+# 1. Bump the version in package.json (also updates src/index.js PACKAGE_VERSION constant)
+npm version patch   # 1.0.0 → 1.0.1  (bug fixes)
+npm version minor   # 1.0.0 → 1.1.0  (new features)
+npm version major   # 1.0.0 → 2.0.0  (breaking changes)
+
+# 2. Push the version commit and tag
+git push origin main --follow-tags
+```
+
+Then on GitHub:
+1. Go to **Releases → Draft a new release**
+2. Select the tag created above (e.g. `v1.0.1`)
+3. Fill in the release notes (copy from `CHANGELOG.md`)
+4. Click **Publish release**
+
+The workflow will run tests, then publish to both registries in parallel. The package will be available at:
+- **npmjs.com:** `https://www.npmjs.com/package/@mojahid2021/pathao-unofficial`
+- **GitHub Packages:** `https://github.com/mojahid2021/pathao-unofficial/pkgs/npm/pathao-unofficial`
+

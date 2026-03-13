@@ -11,8 +11,9 @@ First stable production release. Includes critical bug fixes, dead-code removal,
 
 ### Added
 - GitHub Packages publishing support (`@mojahid2021/pathao-unofficial`).
+- **npmjs.com auto-publish**: the publish workflow now publishes to **both npmjs.com** (via `NPM_TOKEN` secret) **and GitHub Packages** (via `GITHUB_TOKEN`) in parallel when a GitHub Release is created.
 - GitHub Actions CI workflow: runs tests against Node.js 18, 20, and 22 on every push and pull request.
-- GitHub Actions publish workflow: automatically publishes to GitHub Packages when a release is created.
+- GitHub Actions publish workflow: three-job pipeline — `test` gate, then `publish-npm` (npmjs.com) and `publish-gpr` (GitHub Packages) run in parallel.
 - `CHANGELOG.md` following the Keep a Changelog format.
 - `exports` field in `package.json` for standards-compliant ESM resolution.
 - New regression test `runIssueTokenBodyTest` validating the refresh-token request body.

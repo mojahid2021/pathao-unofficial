@@ -17,9 +17,6 @@
     "LICENSE",
     "CHANGELOG.md"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/mojahid2021/pathao-unofficial.git"
