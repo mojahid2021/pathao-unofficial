@@ -1,6 +1,6 @@
 {
   "name": "pathao-unofficial",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Unofficial Pathao delivery API client library. OAuth token management, pricing, orders, and location synchronization.",
   "main": "src/index.js",
   "type": "module",
