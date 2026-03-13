@@ -71,8 +71,64 @@ export async function runAuthTest() {
   await db.close();
 }
 
+// --- issueToken request body construction test
+import { issueToken } from '../src/pathao/client.js';
+
+export async function runIssueTokenBodyTest() {
+  // Intercept fetch to capture what body is sent
+  const capturedRequests = [];
+  const originalFetch = globalThis.fetch;
+
+  globalThis.fetch = async (url, init) => {
+    capturedRequests.push({ url, body: JSON.parse(init.body) });
+    // Return a mock successful response
+    return {
+      ok: true,
+      json: async () => ({
+        access_token: 'NEW_ACCESS',
+        refresh_token: 'NEW_REFRESH',
+        token_type: 'Bearer',
+        expires_in: 3600,
+      }),
+    };
+  };
+
+  try {
+    // Test password grant — body must contain username and password, NOT refresh_token
+    await issueToken('https://api.example.com', {
+      client_id: 'cid',
+      client_secret: 'csecret',
+      username: 'user@example.com',
+      password: 'pass123',
+    });
+
+    const passwordReq = capturedRequests[0].body;
+    assert.strictEqual(passwordReq.grant_type, 'password');
+    assert.strictEqual(passwordReq.username, 'user@example.com');
+    assert.strictEqual(passwordReq.password, 'pass123');
+    assert.ok(!('refresh_token' in passwordReq), 'password grant must not include refresh_token');
+
+    // Test refresh_token grant — body must contain refresh_token, NOT username/password
+    await issueToken('https://api.example.com', {
+      client_id: 'cid',
+      client_secret: 'csecret',
+      grant_type: 'refresh_token',
+      refresh_token: 'OLD_REFRESH_TOKEN',
+    });
+
+    const refreshReq = capturedRequests[1].body;
+    assert.strictEqual(refreshReq.grant_type, 'refresh_token');
+    assert.strictEqual(refreshReq.refresh_token, 'OLD_REFRESH_TOKEN');
+    assert.ok(!('username' in refreshReq), 'refresh_token grant must not include username');
+    assert.ok(!('password' in refreshReq), 'refresh_token grant must not include password');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+
 // ensure auth test runs as part of integration
 export default async function runTests() {
   await runLocationTests();
   await runAuthTest();
+  await runIssueTokenBodyTest();
 }

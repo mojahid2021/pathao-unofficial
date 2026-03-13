@@ -70,19 +70,20 @@ async function ensureFetchIsAvailable() {
  *     password: 'your-password'
  *   });
  */
-async function issueToken(baseUrl, { client_id, client_secret, username, password, grant_type = TOKEN_TYPE_PASSWORD }) {
+async function issueToken(baseUrl, { client_id, client_secret, username, password, grant_type = TOKEN_TYPE_PASSWORD, refresh_token }) {
   await ensureFetchIsAvailable();
 
   const normalizedBaseUrl = baseUrl.replace(/\/$/, '');
   const tokenRequestUrl = `${normalizedBaseUrl}/${PATHAO_TOKEN_ENDPOINT}`;
 
-  const requestBody = {
-    client_id,
-    client_secret,
-    grant_type,
-    username,
-    password,
-  };
+  const requestBody = { client_id, client_secret, grant_type };
+
+  if (grant_type === TOKEN_TYPE_REFRESH) {
+    requestBody.refresh_token = refresh_token;
+  } else {
+    requestBody.username = username;
+    requestBody.password = password;
+  }
 
   const response = await fetch(tokenRequestUrl, {
     method: 'POST',
@@ -347,6 +348,77 @@ async function refreshAndSaveTokenFromDb(adapter, options = {}) {
 
 export { refreshAndSaveTokenFromDb };
 
+// ─── Shared API Request Helper ────────────────────────────────────────────
+
+/**
+ * Make an authenticated POST request to a Pathao API endpoint.
+ *
+ * Shared helper used by calculatePrice() and createOrder() to avoid
+ * duplicating URL resolution, token retrieval, and response parsing.
+ *
+ * @param  {Object}   adapter        - Optional connected database adapter for token retrieval
+ * @param  {string}   endpointPath   - API path relative to base URL (no leading slash)
+ * @param  {Object}   payload        - JSON body to send
+ * @param  {Object}   options        - Configuration options
+ * @param  {string}   options.baseUrl - Pathao API base URL (default: env var)
+ * @param  {string}   options.token   - Access token (default: from adapter)
+ * @param  {string}   errorLabel     - Human-readable label for error messages
+ * @returns {Promise<Object>}         - Parsed JSON response
+ * @throws  {Error}                  - If token missing or API call fails
+ * @private
+ */
+async function makeAuthenticatedPost(adapter, endpointPath, payload, options, errorLabel) {
+  await ensureFetchIsAvailable();
+
+  const normalizedBaseUrl = (options.baseUrl || process.env.PATHAO_BASE_URL || '').replace(/\/$/, '');
+
+  if (!normalizedBaseUrl) {
+    throw new Error(
+      'PATHAO_BASE_URL is required via environment variables or options.baseUrl'
+    );
+  }
+
+  let accessToken = options.token || null;
+
+  if (!accessToken && adapter) {
+    const storedToken = await getLatestToken(adapter);
+    accessToken = (storedToken && (storedToken.access_token || storedToken.accessToken)) || null;
+  }
+
+  if (!accessToken) {
+    throw new Error(
+      'Access token is required. Provide via options.token or have token stored in database adapter'
+    );
+  }
+
+  const endpointUrl = `${normalizedBaseUrl}/${endpointPath}`;
+
+  const response = await fetch(endpointUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const responseText = await response.text().catch(() => '');
+
+  if (!response.ok) {
+    throw new Error(
+      `${errorLabel} API failed. ` +
+        `Status: ${response.status} ${response.statusText}. ` +
+        `Response: ${responseText}`
+    );
+  }
+
+  try {
+    return JSON.parse(responseText || '{}');
+  } catch (parseError) {
+    return { data: responseText };
+  }
+}
+
 // ─── Price and Order APIs ─────────────────────────────────────────────────
 
 /**
@@ -382,59 +454,13 @@ export { refreshAndSaveTokenFromDb };
  *   });
  */
 async function calculatePrice(adapter, payload = {}, options = {}) {
-  await ensureFetchIsAvailable();
-
-  // Determine API endpoint URL
-  const normalizedBaseUrl = (options.baseUrl || process.env.PATHAO_BASE_URL || '').replace(/\/$/, '');
-
-  if (!normalizedBaseUrl) {
-    throw new Error(
-      'PATHAO_BASE_URL is required via environment variables or options.baseUrl'
-    );
-  }
-
-  // Determine access token
-  let accessToken = options.token || null;
-
-  if (!accessToken && adapter) {
-    const storedToken = await getLatestToken(adapter);
-    accessToken = (storedToken && (storedToken.access_token || storedToken.accessToken)) || null;
-  }
-
-  if (!accessToken) {
-    throw new Error(
-      'Access token is required. Provide via options.token or have token stored in database adapter'
-    );
-  }
-
-  // Make API request
-  const priceEndpointUrl = `${normalizedBaseUrl}/${PATHAO_PRICE_ENDPOINT}`;
-
-  const response = await fetch(priceEndpointUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify(payload),
-  });
-
-  const responseText = await response.text().catch(() => '');
-
-  if (!response.ok) {
-    throw new Error(
-      `Pathao price calculation API failed. ` +
-        `Status: ${response.status} ${response.statusText}. ` +
-        `Response: ${responseText}`
-    );
-  }
-
-  // Parse response handling both JSON and plain text responses
-  try {
-    return JSON.parse(responseText || '{}');
-  } catch (parseError) {
-    return { data: responseText };
-  }
+  return makeAuthenticatedPost(
+    adapter,
+    PATHAO_PRICE_ENDPOINT,
+    payload,
+    options,
+    'Pathao price calculation'
+  );
 }
 
 export { calculatePrice };
@@ -477,59 +503,13 @@ export { calculatePrice };
  *   console.log(order.order_id); // New order ID
  */
 async function createOrder(adapter, payload = {}, options = {}) {
-  await ensureFetchIsAvailable();
-
-  // Determine API endpoint URL
-  const normalizedBaseUrl = (options.baseUrl || process.env.PATHAO_BASE_URL || '').replace(/\/$/, '');
-
-  if (!normalizedBaseUrl) {
-    throw new Error(
-      'PATHAO_BASE_URL is required via environment variables or options.baseUrl'
-    );
-  }
-
-  // Determine access token
-  let accessToken = options.token || null;
-
-  if (!accessToken && adapter) {
-    const storedToken = await getLatestToken(adapter);
-    accessToken = (storedToken && (storedToken.access_token || storedToken.accessToken)) || null;
-  }
-
-  if (!accessToken) {
-    throw new Error(
-      'Access token is required. Provide via options.token or have token stored in database adapter'
-    );
-  }
-
-  // Make API request
-  const ordersEndpointUrl = `${normalizedBaseUrl}/${PATHAO_ORDERS_ENDPOINT}`;
-
-  const response = await fetch(ordersEndpointUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify(payload),
-  });
-
-  const responseText = await response.text().catch(() => '');
-
-  if (!response.ok) {
-    throw new Error(
-      `Pathao order creation API failed. ` +
-        `Status: ${response.status} ${response.statusText}. ` +
-        `Response: ${responseText}`
-    );
-  }
-
-  // Parse response handling both JSON and plain text responses
-  try {
-    return JSON.parse(responseText || '{}');
-  } catch (parseError) {
-    return { data: responseText };
-  }
+  return makeAuthenticatedPost(
+    adapter,
+    PATHAO_ORDERS_ENDPOINT,
+    payload,
+    options,
+    'Pathao order creation'
+  );
 }
 
 export { createOrder };

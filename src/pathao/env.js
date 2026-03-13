@@ -12,14 +12,6 @@
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 
-const REQUIRED_PATHAO_ENV_VARS = [
-  'PATHAO_BASE_URL',
-  'PATHAO_CLIENT_ID',
-  'PATHAO_CLIENT_SECRET',
-  'PATHAO_USERNAME',
-  'PATHAO_PASSWORD',
-];
-
 // ─── Environment Loading ───────────────────────────────────────────────────
 
 /**

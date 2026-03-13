@@ -79,22 +79,6 @@ function sleep(delayMs) {
 }
 
 /**
- * Fetch JSON from URL with OAuth authentication.
- *
- * Convenience wrapper. Delegates to fetchWithRetry() with default
- * retry configuration.
- *
- * @param   {string}  url   - URL to fetch from
- * @param   {string}  token - OAuth bearer token (optional)
- * @returns {Promise<Object>} - Parsed JSON response
- * @throws  {Error}   - If fetch fails
- * @private
- */
-async function fetchJson(url, token) {
-  return fetchWithRetry(url, token);
-}
-
-/**
  * Fetch with exponential backoff retry for transient failures.
  *
  * Implements retry logic for rate limiting (429) and server errors (502, 503, 504).
@@ -156,7 +140,7 @@ async function fetchWithRetry(url, token, options = {}) {
       const responseText = await response.text().catch(() => '');
 
       if (RETRYABLE_HTTP_STATUSES.includes(httpStatus)) {
-        if (attemptCount <= maxAttempts) {
+        if (attemptCount < maxAttempts) {
           const delayIndex = Math.min(
             attemptCount - 1,
             retryDelays.length - 1
@@ -485,7 +469,7 @@ async function syncLocationsOnce(adapter, options = {}) {
   // Fetch and synchronize cities
   console.log('Fetching cities from Pathao API...');
   const citiesApiUrl = `${baseUrl}/aladdin/api/v1/city-list`;
-  const citiesResponse = await fetchJson(citiesApiUrl, accessToken);
+  const citiesResponse = await fetchWithRetry(citiesApiUrl, accessToken);
   const citiesList =
     (citiesResponse && citiesResponse.data && citiesResponse.data.data) || [];
 
@@ -494,31 +478,27 @@ async function syncLocationsOnce(adapter, options = {}) {
 
     // Fetch zones for this city
     const zonesApiUrl = `${baseUrl}/aladdin/api/v1/cities/${city.city_id}/zone-list`;
-    const zonesResponse = await fetchJson(zonesApiUrl, accessToken);
+    const zonesResponse = await fetchWithRetry(zonesApiUrl, accessToken);
     const zonesList =
       (zonesResponse && zonesResponse.data && zonesResponse.data.data) || [];
 
     for (const zone of zonesList) {
-      // Ensure city_id is set on zone
-      if (!zone.city_id) {
-        zone.city_id = city.city_id;
-      }
+      // Ensure city_id is set on zone without mutating the API response object
+      const zoneWithCityId = { ...zone, city_id: zone.city_id || city.city_id };
 
-      await upsertZone(adapter, zone);
+      await upsertZone(adapter, zoneWithCityId);
 
       // Fetch areas for this zone
-      const areasApiUrl = `${baseUrl}/aladdin/api/v1/zones/${zone.zone_id}/area-list`;
-      const areasResponse = await fetchJson(areasApiUrl, accessToken);
+      const areasApiUrl = `${baseUrl}/aladdin/api/v1/zones/${zoneWithCityId.zone_id}/area-list`;
+      const areasResponse = await fetchWithRetry(areasApiUrl, accessToken);
       const areasList =
         (areasResponse && areasResponse.data && areasResponse.data.data) || [];
 
       for (const area of areasList) {
-        // Ensure zone_id is set on area
-        if (!area.zone_id) {
-          area.zone_id = zone.zone_id;
-        }
+        // Ensure zone_id is set on area without mutating the API response object
+        const areaWithZoneId = { ...area, zone_id: area.zone_id || zoneWithCityId.zone_id };
 
-        await upsertArea(adapter, area);
+        await upsertArea(adapter, areaWithZoneId);
       }
     }
   }

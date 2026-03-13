@@ -119,9 +119,7 @@ async function createAdapterFromEnv(options = {}) {
  * @private
  */
 function buildAdapterConfig(databaseType, { connectionUrl, env }) {
-  const normalizedType = databaseType.toLowerCase();
-
-  switch (normalizedType) {
+  switch (databaseType) {
     case 'sqlite':
       return buildSqliteConfig({ connectionUrl, env });
 

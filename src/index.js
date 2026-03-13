@@ -62,18 +62,13 @@ class PathaoClient {
    * @returns {number}   .estimatedPrice  - Calculated delivery cost
    *
    * @example
-   *   const estimate = await client.estimateDelivery({ distanceKm: 5, weightKg: 2 });
+   *   const estimate = client.estimateDelivery({ distanceKm: 5, weightKg: 2 });
    *   // { distanceKm: 5, weightKg: 2, estimatedPrice: 130 }
    */
-  async estimateDelivery({ distanceKm = 1, weightKg = 1 } = {}) {
-    const calculateDeliveryPrice = () => {
-      const distanceCost = distanceKm * DISTANCE_RATE;
-      const weightCost = weightKg * WEIGHT_RATE;
-      const totalCost = BASE_DELIVERY_CHARGE + distanceCost + weightCost;
-      return Math.round(totalCost);
-    };
-
-    const estimatedPrice = calculateDeliveryPrice();
+  estimateDelivery({ distanceKm = 1, weightKg = 1 } = {}) {
+    const estimatedPrice = Math.round(
+      BASE_DELIVERY_CHARGE + distanceKm * DISTANCE_RATE + weightKg * WEIGHT_RATE
+    );
 
     return {
       distanceKm,

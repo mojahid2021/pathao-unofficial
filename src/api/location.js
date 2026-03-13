@@ -41,12 +41,11 @@ function getSqlPlaceholder(adapter, placeholderIndex) {
  *  - PostgreSQL: { rows: [...] }
  *  - SQLite/MySQL: [...] or { rows: [...] }
  *
- * @param  {Object}  adapter - Database adapter instance
  * @param  {*}       result  - Raw result from adapter
  * @returns {Array}          - Normalized array of rows
  * @private
  */
-function normalizeQueryResult(adapter, result) {
+function normalizeQueryResult(result) {
   if (!result) {
     return [];
   }
@@ -85,7 +84,7 @@ async function getCities(adapter) {
   }
 
   const result = await adapter.run(query);
-  return normalizeQueryResult(adapter, result);
+  return normalizeQueryResult(result);
 }
 
 export { getCities };
@@ -123,7 +122,7 @@ async function getZones(adapter, cityId) {
   }
 
   const result = await adapter.run(query, params);
-  return normalizeQueryResult(adapter, result);
+  return normalizeQueryResult(result);
 }
 
 export { getZones };
@@ -162,7 +161,7 @@ async function getAreas(adapter, zoneId) {
   }
 
   const result = await adapter.run(query, params);
-  return normalizeQueryResult(adapter, result);
+  return normalizeQueryResult(result);
 }
 
 export { getAreas };
