@@ -1,7 +1,7 @@
-# @mojahid2021/pathao-unofficial
+# pathao-unofficial
 
 [![CI](https://github.com/mojahid2021/pathao-unofficial/actions/workflows/ci.yml/badge.svg)](https://github.com/mojahid2021/pathao-unofficial/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/npm/v/@mojahid2021/pathao-unofficial)](https://www.npmjs.com/package/@mojahid2021/pathao-unofficial)
+[![npm version](https://img.shields.io/npm/v/pathao-unofficial)](https://www.npmjs.com/package/pathao-unofficial)
 [![GitHub Packages](https://img.shields.io/github/package-json/v/mojahid2021/pathao-unofficial)](https://github.com/mojahid2021/pathao-unofficial/pkgs/npm/pathao-unofficial)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Node.js >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
@@ -13,16 +13,16 @@ Unofficial Pathao delivery API client library for Node.js. Provides OAuth token 
 **From npmjs.com (recommended):**
 
 ```bash
-npm install @mojahid2021/pathao-unofficial
+npm install pathao-unofficial
 ```
 
 **From GitHub Packages:**
 
 ```bash
-# Add to your project's .npmrc
+# Add to your project's .npmrc (if using GitHub Packages scoped registry)
 echo "@mojahid2021:registry=https://npm.pkg.github.com" >> .npmrc
 
-npm install @mojahid2021/pathao-unofficial
+npm install pathao-unofficial
 ```
 
 ## Database Setup
@@ -69,8 +69,8 @@ export DB_PASSWORD=password
 ### 1. Issue Token from Credentials
 
 ```javascript
-import { getAndSaveTokenFromEnv } from '@mojahid2021/pathao-unofficial';
-import { createAdapterFromEnv } from '@mojahid2021/pathao-unofficial';
+import { getAndSaveTokenFromEnv } from 'pathao-unofficial';
+import { createAdapterFromEnv } from 'pathao-unofficial';
 
 // Initialize database adapter
 const adapter = await createAdapterFromEnv({ connect: true });
@@ -86,8 +86,8 @@ await adapter.close();
 ### 2. Retrieve Stored Token
 
 ```javascript
-import { getLatestToken } from '@mojahid2021/pathao-unofficial';
-import { createAdapterFromEnv } from '@mojahid2021/pathao-unofficial';
+import { getLatestToken } from 'pathao-unofficial';
+import { createAdapterFromEnv } from 'pathao-unofficial';
 
 const adapter = await createAdapterFromEnv({ connect: true });
 
@@ -107,8 +107,8 @@ await adapter.close();
 ### 3. Refresh Token
 
 ```javascript
-import { refreshAndSaveTokenFromDb } from '@mojahid2021/pathao-unofficial';
-import { createAdapterFromEnv } from '@mojahid2021/pathao-unofficial';
+import { refreshAndSaveTokenFromDb } from 'pathao-unofficial';
+import { createAdapterFromEnv } from 'pathao-unofficial';
 
 const adapter = await createAdapterFromEnv({ connect: true });
 
@@ -126,8 +126,8 @@ await adapter.close();
 ### 1. Query Location Data
 
 ```javascript
-import { getCities, getZones, getAreas } from '@mojahid2021/pathao-unofficial';
-import { createAdapterFromEnv } from '@mojahid2021/pathao-unofficial';
+import { getCities, getZones, getAreas } from 'pathao-unofficial';
+import { createAdapterFromEnv } from 'pathao-unofficial';
 
 const adapter = await createAdapterFromEnv({ connect: true });
 
@@ -160,8 +160,8 @@ await adapter.close();
 ### 2. Build Hierarchical Location Structure
 
 ```javascript
-import { getLocationHierarchy } from '@mojahid2021/pathao-unofficial';
-import { createAdapterFromEnv } from '@mojahid2021/pathao-unofficial';
+import { getLocationHierarchy } from 'pathao-unofficial';
+import { createAdapterFromEnv } from 'pathao-unofficial';
 
 const adapter = await createAdapterFromEnv({ connect: true });
 
@@ -198,8 +198,8 @@ await adapter.close();
 ### 3. Seed Location Data
 
 ```javascript
-import { seedLocationData } from '@mojahid2021/pathao-unofficial';
-import { createAdapterFromEnv } from '@mojahid2021/pathao-unofficial';
+import { seedLocationData } from 'pathao-unofficial';
+import { createAdapterFromEnv } from 'pathao-unofficial';
 
 const adapter = await createAdapterFromEnv({ connect: true });
 
@@ -232,8 +232,8 @@ await adapter.close();
 ### 4. Sync Locations from Pathao API
 
 ```javascript
-import { syncLocationsOnce } from '@mojahid2021/pathao-unofficial';
-import { createAdapterFromEnv } from '@mojahid2021/pathao-unofficial';
+import { syncLocationsOnce } from 'pathao-unofficial';
+import { createAdapterFromEnv } from 'pathao-unofficial';
 
 const adapter = await createAdapterFromEnv({ connect: true });
 
@@ -249,7 +249,7 @@ await adapter.close();
 ### 5. Continuous Location Sync (Background)
 
 ```javascript
-import { triggerLocationSync } from '@mojahid2021/pathao-unofficial';
+import { triggerLocationSync } from 'pathao-unofficial';
 
 // Start background sync (runs every 6 hours by default)
 const syncHandle = triggerLocationSync(null, {
@@ -271,8 +271,8 @@ setTimeout(() => {
 ### 1. Calculate Delivery Price
 
 ```javascript
-import { calculatePrice, getLatestToken } from '@mojahid2021/pathao-unofficial';
-import { createAdapterFromEnv } from '@mojahid2021/pathao-unofficial';
+import { calculatePrice, getLatestToken } from 'pathao-unofficial';
+import { createAdapterFromEnv } from 'pathao-unofficial';
 
 const adapter = await createAdapterFromEnv({ connect: true });
 const token = await getLatestToken(adapter);
@@ -302,8 +302,8 @@ await adapter.close();
 ### 2. Create Order
 
 ```javascript
-import { createOrder, getLatestToken } from '@mojahid2021/pathao-unofficial';
-import { createAdapterFromEnv } from '@mojahid2021/pathao-unofficial';
+import { createOrder, getLatestToken } from 'pathao-unofficial';
+import { createAdapterFromEnv } from 'pathao-unofficial';
 
 const adapter = await createAdapterFromEnv({ connect: true });
 const token = await getLatestToken(adapter);
@@ -335,14 +335,13 @@ await adapter.close();
 ## PathaoClient Class (Convenience Wrapper)
 
 ```javascript
-import { PathaoClient } from '@mojahid2021/pathao-unofficial';
+import { PathaoClient } from 'pathao-unofficial';
 
 // Create client instance
 const client = new PathaoClient();
 
 // Get library version
 console.log('Library version:', client.version());
-
 // Estimate delivery cost (built-in helper)
 const estimate = await client.estimateDelivery({
   distanceKm: 3.2,
@@ -359,7 +358,7 @@ console.log('Total estimate:', estimate.totalCharge);
 ### Create Adapter Manually
 
 ```javascript
-import { createAdapter } from '@mojahid2021/pathao-unofficial';
+import { createAdapter } from 'pathao-unofficial';
 
 // SQLite
 const sqlite = await createAdapter({
@@ -405,7 +404,7 @@ await mysql.close();
 ### Run Custom Queries
 
 ```javascript
-import { createAdapterFromEnv } from '@mojahid2021/pathao-unofficial';
+import { createAdapterFromEnv } from 'pathao-unofficial';
 
 const adapter = await createAdapterFromEnv({ connect: true });
 
@@ -433,8 +432,8 @@ await adapter.close();
 ## Error Handling
 
 ```javascript
-import { getAndSaveTokenFromEnv } from '@mojahid2021/pathao-unofficial';
-import { createAdapterFromEnv } from '@mojahid2021/pathao-unofficial';
+import { getAndSaveTokenFromEnv } from 'pathao-unofficial';
+import { createAdapterFromEnv } from 'pathao-unofficial';
 
 try {
   const adapter = await createAdapterFromEnv({ connect: true });
@@ -492,137 +491,6 @@ npm test
 ## License
 
 MIT
-await db.addColumn('users', 'email', 'TEXT');
-const info = await db.tableInfo('users');
-console.log(info);
-await db.dropTable('users');
-await db.close();
-```
-
-Example: choose Postgres
-
-```js
-import { createAdapter } from './src/db/index.js';
-
-const db = createAdapter('postgres', { connection: { host: 'localhost', user: 'me', password: 'pw', database: 'db' } });
-await db.connect();
-await db.createTable('items', { id: 'SERIAL PRIMARY KEY', name: 'TEXT' });
-await db.close();
-```
-
-Example: choose MySQL
-
-```js
-import { createAdapter } from './src/db/index.js';
-
-const db = createAdapter('mysql', { connection: { host: 'localhost', user: 'me', password: 'pw', database: 'db' } });
-await db.connect();
-await db.createTable('things', { id: 'INT AUTO_INCREMENT PRIMARY KEY', name: 'VARCHAR(255)' });
-await db.close();
-```
-
-MongoDB notes
-
-This adapter maps SQL "tables" to MongoDB collections. Use `createAdapter('mongodb', { uri, dbName })`, then use `connect()`, `createTable`/`dropTable` to manage collections, and `insertOne`/`find` for data operations.
-
-Example:
-
-```js
-import { createAdapter } from './src/db/index.js';
-const db = createAdapter('mongodb', { uri: process.env.MONGODB_URI, dbName: 'pathao_unofficial' });
-await db.connect();
-await db.createTable('cities');
-await db.insertOne('cities', { city_id: 1, city_name: 'Dhaka' });
-const cities = await db.find('cities', {});
-console.log(cities);
-await db.dropTable('cities');
-await db.close();
-```
-
-Testing
-
-```
-npm test
-```
-
-## Configuration & Environment (professional)
-
-Use environment variables as the single source of truth for credentials and deployment configuration. Do not store secrets (client secret, user password, DB passwords) in the database or in version control. For local development, keep a `.env` file out of version control and use `dotenv`.
-
-Recommended env variables:
-
-- `PATHAO_BASE_URL` — Pathao API base URL (sandbox or production)
-- `PATHAO_CLIENT_ID` — OAuth client id
-- `PATHAO_CLIENT_SECRET` — OAuth client secret
-- `PATHAO_USERNAME` — Merchant username/email
-- `PATHAO_PASSWORD` — Merchant password
-
-Database selection via environment
-
-Set `DB_TYPE` (one of `sqlite`, `postgres`, `mysql`, `mongodb`) and `DATABASE_URL` (or DB-specific env vars). The library exposes `createAdapterFromEnv({ connect: true })` which will create and (optionally) connect the chosen adapter.
-
-Examples:
-
-- SQLite (in-memory):
-	- `export DB_TYPE=sqlite`
-	- `export DATABASE_URL=sqlite://:memory:`
-
-- Postgres (connection URL):
-	- `export DB_TYPE=postgres`
-	- `export DATABASE_URL=postgres://user:pass@localhost:5432/dbname`
-
-- MySQL (connection URL):
-	- `export DB_TYPE=mysql`
-	- `export DATABASE_URL=mysql://user:pass@localhost:3306/dbname`
-
-- MongoDB:
-	- `export DB_TYPE=mongodb`
-	- `export DATABASE_URL=mongodb://user:pass@localhost:27017`
-	- `export MONGODB_DB=pathao_unofficial` (optional)
-
-Usage example:
-
-```js
-import { createAdapterFromEnv } from '@mojahid2021/pathao-unofficial';
-// create + connect
-const adapter = await createAdapterFromEnv({ connect: true });
-// use adapter (e.g., seed schema, request tokens)
-```
-
-Usage (modern, safe flow):
-
-1. Provision secrets to your runtime environment (env vars, secret manager).
-2. On startup, create a DB adapter and connect (e.g., SQLite for local, Postgres for prod).
-3. Call `getAndSaveTokenFromEnv(adapter)` to issue a token using env credentials and persist only the token and expiry.
-4. Use `getLatestToken(adapter)` to fetch the active token when making API calls.
-
-Example code snippet:
-
-```js
-import { createAdapter, getAndSaveTokenFromEnv, getLatestToken } from '@mojahid2021/pathao-unofficial';
-
-// create adapter and connect (sqlite example)
-const db = createAdapter('sqlite', { filename: ':memory:' });
-await db.connect();
-
-// issue token (reads PATHAO_* env vars) and save token record
-const token = await getAndSaveTokenFromEnv(db);
-
-// later when calling Pathao APIs
-const stored = await getLatestToken(db);
-const accessToken = stored && stored.access_token;
-```
-
-Security notes:
-
-- Use short-lived tokens where possible and rotate credentials.
-- Use platform secret stores (AWS Secrets Manager, Azure Key Vault, GCP Secret Manager) in production and inject as env vars.
-- Ensure `.env` files are listed in `.gitignore`.
-
-
-License
-
-MIT
 
 ## Sync worker & rate limits
 
@@ -633,24 +501,6 @@ The library provides a background sync worker that fetches cities → zones → 
 - Behavior: the worker logs retry attempts and resumes the sync where it left off; transient failures do not discard already persisted records.
 - Token refresh: if you expect access tokens to expire during long sync runs, implement a token-refresh flow (see `refreshToken` / `refreshAndSaveTokenFromDb` in `src/pathao/client.js`) and call it when you receive 401 responses in your environment. Integrating automatic token refresh into the sync loop is a recommended next step.
 
-Example: start background sync (default interval 6 hours)
-
-```js
-import { createAdapterFromEnv, triggerLocationSync } from '@mojahid2021/pathao-unofficial';
-// Option A: Let the library auto-create the adapter from environment
-// (no arguments). The worker will read `PATHAO_BASE_URL` and DB env vars
-// from your runtime environment automatically.
-const worker = triggerLocationSync();
-
-// Option B: Create adapter yourself and pass it in (gives more control)
-// const adapter = await createAdapterFromEnv({ connect: true });
-// const worker = triggerLocationSync(adapter);
-// stop later
-// worker.stop();
-```
-
-This approach keeps the sync robust against intermittent rate limits while ensuring data is persisted incrementally.
-
 ## Price Calculation API
 
 The package includes a helper to call Pathao's price calculation endpoint `/aladdin/api/v1/merchant/price-plan`.
@@ -658,7 +508,7 @@ The package includes a helper to call Pathao's price calculation endpoint `/alad
 Usage:
 
 ```js
-import { calculatePrice } from '@mojahid2021/pathao-unofficial';
+import { calculatePrice } from 'pathao-unofficial';
 
 // payload example
 const payload = {
@@ -697,7 +547,7 @@ Use `createOrder` to create a new order via `/aladdin/api/v1/orders`.
 Usage:
 
 ```js
-import { createOrder } from '@mojahid2021/pathao-unofficial';
+import { createOrder } from 'pathao-unofficial';
 
 const payload = {
 	store_id: 123,
@@ -742,7 +592,7 @@ Optional: `merchant_order_id`, `recipient_secondary_phone`, `recipient_city`, `r
 You can fetch locations from the DB in a hierarchical shape (cities → zones → areas) with `getLocationHierarchy`.
 
 ```js
-import { getLocationHierarchy } from '@mojahid2021/pathao-unofficial';
+import { getLocationHierarchy } from 'pathao-unofficial';
 
 const tree = await getLocationHierarchy(adapter);
 // Example output:
@@ -757,7 +607,7 @@ The publish workflow (`publish.yml`) runs automatically when you create a GitHub
 
 ### One-time setup: Add NPM_TOKEN secret
 
-1. Generate an npm Access Token at [npmjs.com → Access Tokens](https://www.npmjs.com/settings/~/tokens) — choose **Automation** type.
+1. Generate an npm Access Token at https://www.npmjs.com/settings/~/tokens — choose **Automation** type.
 2. In your GitHub repository go to **Settings → Secrets and variables → Actions → New repository secret**.
 3. Name: `NPM_TOKEN`, Value: the token from step 1.
 
@@ -782,6 +632,9 @@ Then on GitHub:
 4. Click **Publish release**
 
 The workflow will run tests, then publish to both registries in parallel. The package will be available at:
-- **npmjs.com:** `https://www.npmjs.com/package/@mojahid2021/pathao-unofficial`
+- **npmjs.com:** `https://www.npmjs.com/package/pathao-unofficial`
 - **GitHub Packages:** `https://github.com/mojahid2021/pathao-unofficial/pkgs/npm/pathao-unofficial`
 
+## Troubleshooting
+
+... (rest unchanged)

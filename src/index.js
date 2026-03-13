@@ -12,7 +12,7 @@
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 
-const PACKAGE_VERSION = '1.0.0';
+const PACKAGE_VERSION = '1.0.1';
 const BASE_DELIVERY_CHARGE = 30; // Currency units
 const DISTANCE_RATE = 20; // Currency units per km
 const WEIGHT_RATE = 15; // Currency units per kg

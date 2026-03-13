@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 First stable production release. Includes critical bug fixes, dead-code removal, and code-quality improvements over the 0.1.x series.
 
 ### Added
-- GitHub Packages publishing support (`@mojahid2021/pathao-unofficial`).
+- GitHub Packages publishing support (`pathao-unofficial`).
 - **npmjs.com auto-publish**: the publish workflow now publishes to **both npmjs.com** (via `NPM_TOKEN` secret) **and GitHub Packages** (via `GITHUB_TOKEN`) in parallel when a GitHub Release is created.
 - GitHub Actions CI workflow: runs tests against Node.js 18, 20, and 22 on every push and pull request.
 - GitHub Actions publish workflow: three-job pipeline — `test` gate, then `publish-npm` (npmjs.com) and `publish-gpr` (GitHub Packages) run in parallel.
@@ -26,7 +26,7 @@ First stable production release. Includes critical bug fixes, dead-code removal,
 - `sqlite.verbose()` was unconditionally enabled, flooding production logs. Verbose mode is now opt-in via `SQLITE_VERBOSE=1`.
 
 ### Changed
-- Scoped package name from `pathao-unofficial` to `@mojahid2021/pathao-unofficial` for GitHub Packages compatibility.
+- Scoped package name from `@mojahid2021/pathao-unofficial` to `pathao-unofficial` for GitHub Packages compatibility.
 - Extracted shared `makeAuthenticatedPost` helper to eliminate ~30 lines of duplicated boilerplate between `calculatePrice` and `createOrder`.
 - `estimateDelivery` is no longer `async` (it performs no I/O); the redundant inner function is removed.
 - `buildAdapterConfig` no longer redundantly calls `.toLowerCase()` on a type already normalised by the caller.

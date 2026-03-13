@@ -203,7 +203,7 @@ node test.js
 
 - Package name might already exist on NPM
 - Solution: Choose a different name, or contact NPM support if you own the package
-- Scoped packages: `@mojahid2021/pathao-unofficial`
+- Scoped packages: `pathao-unofficial`
 
 ### "npm ERR! not found: npm"
 
