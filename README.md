@@ -16,14 +16,17 @@ Unofficial Pathao delivery API client library for Node.js. Provides OAuth token 
 npm install pathao-unofficial
 ```
 
-**From GitHub Packages:**
+**From GitHub Packages** (published as `@mojahid2021/pathao-unofficial`):
 
 ```bash
-# Add to your project's .npmrc (if using GitHub Packages scoped registry)
+# 1. Add the GitHub Packages registry for the @mojahid2021 scope to your project .npmrc
 echo "@mojahid2021:registry=https://npm.pkg.github.com" >> .npmrc
 
-npm install pathao-unofficial
+# 2. Install
+npm install @mojahid2021/pathao-unofficial
 ```
+
+> The package on npmjs.com is unscoped (`pathao-unofficial`) so `npm install pathao-unofficial` works without any extra configuration.
 
 ## Database Setup
 
@@ -605,18 +608,27 @@ This is convenient for building address pickers or returning full location trees
 
 The publish workflow (`publish.yml`) runs automatically when you create a GitHub Release and publishes the package to **both npmjs.com and GitHub Packages**.
 
+- **npmjs.com** publishes the package as `pathao-unofficial` (unscoped) — install with `npm install pathao-unofficial`.
+- **GitHub Packages** publishes the package as `@mojahid2021/pathao-unofficial` (scoped, required by GitHub Packages) — install with `npm install @mojahid2021/pathao-unofficial`.
+
 ### One-time setup: Add NPM_TOKEN secret
 
-1. Generate an npm Access Token at https://www.npmjs.com/settings/~/tokens — choose **Automation** type.
-2. In your GitHub repository go to **Settings → Secrets and variables → Actions → New repository secret**.
-3. Name: `NPM_TOKEN`, Value: the token from step 1.
+1. Go to https://www.npmjs.com and log in to your account.
+2. Navigate to **Account → Access Tokens → Generate New Token**.
+3. Choose **Classic Token** → type **Automation** (bypasses OTP/2FA during CI).  
+   _Alternatively, use a **Granular Access Token** with "Read and write" publish access to `pathao-unofficial`._
+4. Copy the generated token.
+5. In your GitHub repository go to **Settings → Secrets and variables → Actions → New repository secret**.
+6. Name: `NPM_TOKEN`, Value: the token from step 4.
+
+> **Important:** The token must belong to the npm account that owns the `pathao-unofficial` package name. If this is a first publish, make sure the package name is not already claimed by another account on npmjs.com.
 
 The `GITHUB_TOKEN` secret (used for GitHub Packages) is provided automatically — no setup needed.
 
 ### Publishing a new release
 
 ```bash
-# 1. Bump the version in package.json (also updates src/index.js PACKAGE_VERSION constant)
+# 1. Bump the version in package.json
 npm version patch   # 1.0.0 → 1.0.1  (bug fixes)
 npm version minor   # 1.0.0 → 1.1.0  (new features)
 npm version major   # 1.0.0 → 2.0.0  (breaking changes)
@@ -635,6 +647,10 @@ The workflow will run tests, then publish to both registries in parallel. The pa
 - **npmjs.com:** `https://www.npmjs.com/package/pathao-unofficial`
 - **GitHub Packages:** `https://github.com/mojahid2021/pathao-unofficial/pkgs/npm/pathao-unofficial`
 
-## Troubleshooting
+### Troubleshooting publish failures
 
-... (rest unchanged)
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `npm error 403` | Invalid/expired token or package name taken | Regenerate `NPM_TOKEN` (Automation type); verify package name is available on npmjs.com |
+| `npm error ENEEDAUTH` for npmjs.com in GPR job | Unscoped package routed to default registry | Fixed — GPR job now renames to `@mojahid2021/pathao-unofficial` before publishing |
+| `npm error E404` | Package not found | First-time publish; ensure `NPM_TOKEN` is set correctly |
