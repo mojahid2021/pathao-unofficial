@@ -9,8 +9,6 @@
  *  - Provide schema teardown for testing and cleanup
  */
 
-import { SUPPORTED } from './index.js';
-
 // ─── Location Schema ───────────────────────────────────────────────────────
 
 /**
@@ -93,8 +91,18 @@ export { createLocationTables, dropLocationTables };
  *   await createAuthTables(adapter);
  */
 async function createAuthTables(adapter) {
+  // Use database-appropriate auto-increment primary key syntax
+  let idColumnType;
+  if (adapter.type === 'postgres') {
+    idColumnType = 'SERIAL PRIMARY KEY';
+  } else if (adapter.type === 'mysql') {
+    idColumnType = 'INT AUTO_INCREMENT PRIMARY KEY';
+  } else {
+    idColumnType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+  }
+
   await adapter.createTable('oauth_tokens', {
-    id: 'INTEGER PRIMARY KEY AUTOINCREMENT',
+    id: idColumnType,
     access_token: 'TEXT NOT NULL',
     refresh_token: 'TEXT',
     token_type: 'TEXT',

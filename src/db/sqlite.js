@@ -60,8 +60,8 @@ class SQLiteAdapter {
 
     let sqlite = sqliteModule.default || sqliteModule;
 
-    // Enable verbose logging for debugging (optional)
-    if (typeof sqlite.verbose === 'function') {
+    // Enable verbose logging only in debug/development mode
+    if (process.env.SQLITE_VERBOSE === '1' && typeof sqlite.verbose === 'function') {
       sqlite = sqlite.verbose();
     }
 
@@ -117,7 +117,15 @@ class SQLiteAdapter {
    */
   async close() {
     if (this.database) {
-      this.database.close();
+      await new Promise((resolve, reject) => {
+        this.database.close((error) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve();
+          }
+        });
+      });
     }
   }
 
