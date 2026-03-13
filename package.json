@@ -17,6 +17,10 @@
     "LICENSE",
     "CHANGELOG.md"
   ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mojahid2021/pathao-unofficial.git"
