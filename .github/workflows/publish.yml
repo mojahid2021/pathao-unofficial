@@ -50,7 +50,33 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Sync version with release tag
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+            echo "Updating package.json version: $PKG_VERSION → $TAG_VERSION"
+            TAG_VERSION="$TAG_VERSION" node -e "
+              const fs = require('fs');
+              const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+              pkg.version = process.env.TAG_VERSION;
+              fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');
+            "
+          fi
+
+      - name: Check if version already published on npmjs.com
+        id: check-npm
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "pathao-unofficial@${VERSION}" version > /dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Version ${VERSION} already published to npmjs.com — skipping."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish to npmjs.com
+        if: steps.check-npm.outputs.skip != 'true'
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -76,10 +102,38 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Sync version with release tag
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+            echo "Updating package.json version: $PKG_VERSION → $TAG_VERSION"
+            TAG_VERSION="$TAG_VERSION" node -e "
+              const fs = require('fs');
+              const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+              pkg.version = process.env.TAG_VERSION;
+              fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');
+            "
+          fi
+
       - name: Rename package for GitHub Packages (scope required)
         run: node scripts/prepare-gpr-package.js
 
+      - name: Check if version already published on GitHub Packages
+        id: check-gpr
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "@mojahid2021/pathao-unofficial@${VERSION}" version > /dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Version ${VERSION} already published to GitHub Packages — skipping."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish to GitHub Packages
+        if: steps.check-gpr.outputs.skip != 'true'
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
