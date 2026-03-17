@@ -10,6 +10,8 @@
  *  - Order creation
  */
 
+import { ensureFetch } from '../utils.js';
+
 // ─── Constants ─────────────────────────────────────────────────────────────
 
 const PATHAO_TOKEN_ENDPOINT = 'aladdin/api/v1/issue-token';
@@ -21,25 +23,6 @@ const DEFAULT_BEARER_SCHEME = 'Bearer';
 const DEFAULT_TOKEN_EXPIRY = 0;
 
 // ─── OAuth Token Management ───────────────────────────────────────────────
-
-/**
- * Ensure fetch is available globally (polyfill for Node < 18).
- *
- * @returns {Promise<void>}
- * @throws {Error} - If fetch unavailable and undici not installed
- * @private
- */
-async function ensureFetchIsAvailable() {
-  if (globalThis.fetch) return;
-  try {
-    const undici = await import('undici');
-    globalThis.fetch = undici.fetch;
-  } catch (err) {
-    throw new Error(
-      'fetch is not available. Install `undici` (npm install undici) or use Node.js >= 18'
-    );
-  }
-}
 
 /**
  * Request an OAuth token from the Pathao API.
@@ -71,7 +54,7 @@ async function ensureFetchIsAvailable() {
  *   });
  */
 async function issueToken(baseUrl, { client_id, client_secret, username, password, grant_type = TOKEN_TYPE_PASSWORD, refresh_token }) {
-  await ensureFetchIsAvailable();
+  await ensureFetch();
 
   const normalizedBaseUrl = baseUrl.replace(/\/$/, '');
   const tokenRequestUrl = `${normalizedBaseUrl}/${PATHAO_TOKEN_ENDPOINT}`;
@@ -368,7 +351,7 @@ export { refreshAndSaveTokenFromDb };
  * @private
  */
 async function makeAuthenticatedPost(adapter, endpointPath, payload, options, errorLabel) {
-  await ensureFetchIsAvailable();
+  await ensureFetch();
 
   const normalizedBaseUrl = (options.baseUrl || process.env.PATHAO_BASE_URL || '').replace(/\/$/, '');
 

@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-03-17
+
+### Security
+- Upgraded `sqlite3` devDependency from `^5.1.7` to `^6.0.1`, resolving 7 vulnerabilities (5 high, 2 low) in transitive dependencies (`tar`, `node-gyp`, `cacache`, `http-proxy-agent`, `@tootallnate/once`).
+
+### Changed
+- Upgraded `dotenv` dependency from `^16.0.3` to `^16.6.1` (latest v16 patch).
+- Extracted duplicate `ensureFetch` polyfill into a shared `src/utils.js` module; both `client.js` and `sync.js` now import it from there.
+- Refactored `seedLocationData` in `location.js` to use the existing `getSqlPlaceholder` helper instead of a manual `isPostgres` branch, eliminating the query duplication.
+- Fixed duplicate `publishConfig` key in `package.json`.
+- Aligned `PACKAGE_VERSION` constant in `src/index.js` with the actual package version.
+
 ## [1.0.0] - 2026-03-13
 
 First stable production release. Includes critical bug fixes, dead-code removal, and code-quality improvements over the 0.1.x series.

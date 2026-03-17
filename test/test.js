@@ -7,7 +7,7 @@ import { getCities, getZones, getAreas, seedLocationData } from '../src/api/loca
 export async function runLocationTests() {
   const client = new PathaoClient();
   assert.strictEqual(PathaoClient.hello(), 'pathao-unofficial');
-  assert.strictEqual(client.version(), '1.0.1');
+  assert.strictEqual(client.version(), '1.0.4');
 
   // Real sqlite schema & API tests (in-memory)
   const db = new SQLiteAdapter({ filename: ':memory:' });

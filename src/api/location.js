@@ -197,24 +197,22 @@ async function seedLocationData(adapter, data = {}) {
   const zones = data.zones || [];
   const areas = data.areas || [];
 
-  const isPostgres = adapter.type === 'postgres';
+  const p = (i) => getSqlPlaceholder(adapter, i);
 
   // Insert cities
   for (const city of cities) {
-    const insertQuery = isPostgres
-      ? 'INSERT INTO cities (city_id, city_name) VALUES ($1, $2)'
-      : 'INSERT INTO cities (city_id, city_name) VALUES (?, ?)';
-
-    await adapter.run(insertQuery, [city.city_id, city.city_name]);
+    await adapter.run(
+      `INSERT INTO cities (city_id, city_name) VALUES (${p(1)}, ${p(2)})`,
+      [city.city_id, city.city_name]
+    );
   }
 
   // Insert zones
   for (const zone of zones) {
-    const insertQuery = isPostgres
-      ? 'INSERT INTO zones (zone_id, city_id, zone_name) VALUES ($1, $2, $3)'
-      : 'INSERT INTO zones (zone_id, city_id, zone_name) VALUES (?, ?, ?)';
-
-    await adapter.run(insertQuery, [zone.zone_id, zone.city_id, zone.zone_name]);
+    await adapter.run(
+      `INSERT INTO zones (zone_id, city_id, zone_name) VALUES (${p(1)}, ${p(2)}, ${p(3)})`,
+      [zone.zone_id, zone.city_id, zone.zone_name]
+    );
   }
 
   // Insert areas
@@ -222,17 +220,10 @@ async function seedLocationData(adapter, data = {}) {
     const homeDeliveryFlag = area.home_delivery_available ? 1 : 0;
     const pickupFlag = area.pickup_available ? 1 : 0;
 
-    const insertQuery = isPostgres
-      ? 'INSERT INTO areas (area_id, zone_id, area_name, home_delivery_available, pickup_available) VALUES ($1, $2, $3, $4, $5)'
-      : 'INSERT INTO areas (area_id, zone_id, area_name, home_delivery_available, pickup_available) VALUES (?, ?, ?, ?, ?)';
-
-    await adapter.run(insertQuery, [
-      area.area_id,
-      area.zone_id,
-      area.area_name,
-      homeDeliveryFlag,
-      pickupFlag,
-    ]);
+    await adapter.run(
+      `INSERT INTO areas (area_id, zone_id, area_name, home_delivery_available, pickup_available) VALUES (${p(1)}, ${p(2)}, ${p(3)}, ${p(4)}, ${p(5)})`,
+      [area.area_id, area.zone_id, area.area_name, homeDeliveryFlag, pickupFlag]
+    );
   }
 }
 

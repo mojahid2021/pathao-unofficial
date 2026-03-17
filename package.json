@@ -1,6 +1,6 @@
 {
   "name": "pathao-unofficial",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Unofficial Pathao delivery API client library. OAuth token management, pricing, orders, and location synchronization.",
   "main": "src/index.js",
   "type": "module",
@@ -43,16 +43,12 @@
     "bangladesh"
   ],
   "dependencies": {
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.6.1"
   },
   "devDependencies": {
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^6.0.1"
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
   }
 }

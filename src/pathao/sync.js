@@ -16,6 +16,7 @@
 import { getLatestToken } from './client.js';
 import { createLocationTables } from '../db/schema.js';
 import { createAdapterFromEnv } from '../db/index.js';
+import { ensureFetch } from '../utils.js';
 
 // ─── Retry Configuration ──────────────────────────────────────────────────
 
@@ -37,31 +38,6 @@ const DEFAULT_SYNC_INTERVAL_MS = 1000 * 60 * 60 * 6;
 const RETRYABLE_HTTP_STATUSES = [429, 502, 503, 504];
 
 // ─── Fetch Utilities ──────────────────────────────────────────────────────
-
-/**
- * Ensure fetch API is available globally.
- *
- * For Node.js versions <18, install and polyfill fetch from `undici` package.
- * Modern Node.js (≥18) has native globalThis.fetch.
- *
- * @returns {Promise<void>}
- * @throws  {Error} - If fetch cannot be made available
- * @private
- */
-async function ensureFetch() {
-  if (globalThis.fetch) {
-    return;
-  }
-
-  try {
-    const undici = await import('undici');
-    globalThis.fetch = undici.fetch;
-  } catch (error) {
-    throw new Error(
-      'fetch() is not available. Install Node.js >=18 or add the `undici` package'
-    );
-  }
-}
 
 /**
  * Pause execution for specified milliseconds.
